@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Focus" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">#0C0C0B</item>
+        <item name="android:navigationBarColor">#0C0C0B</item>
+        <item name="android:windowBackground">#0C0C0B</item>
+        <item name="colorPrimary">#E4F25A</item>
+        <item name="colorOnPrimary">#0C0C0B</item>
+        <item name="android:textColor">#F3F0E8</item>
+    </style>
+</resources>
