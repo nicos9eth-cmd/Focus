@@ -2,10 +2,14 @@ name: Build APK
 
 on:
   push:
+    branches: [main]
     paths:
       - "android/**"
       - ".github/workflows/apk.yml"
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   debug:
@@ -25,8 +29,25 @@ jobs:
       - name: Assemble debug APK
         run: gradle assembleDebug --no-daemon
         working-directory: android
+      - name: Stable filename
+        working-directory: android
+        run: |
+          src=$(find app/build/outputs/apk/debug -name '*.apk' -print -quit)
+          test -n "$src"
+          cp "$src" "$GITHUB_WORKSPACE/Focus.apk"
       - uses: actions/upload-artifact@v4
         with:
           name: Focus-debug
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: Focus.apk
           if-no-files-found: error
+      - name: Publish sideload release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete sideload --yes --cleanup-tag || true
+          gh release create sideload "$GITHUB_WORKSPACE/Focus.apk" \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "Focus — APK sideload" \
+            --notes "Build debug pour installation manuelle. Ce n'est pas une build Play Store. Active le service d'accessibilité Focus au premier lancement."
