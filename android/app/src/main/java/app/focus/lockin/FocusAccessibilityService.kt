@@ -10,7 +10,7 @@ class FocusAccessibilityService : AccessibilityService() {
         val pkg = event.packageName?.toString() ?: return
         if (pkg in ALWAYS_ALLOWED) return
         val store = SessionStore(this)
-        if (!store.isSessionActive()) return
+        if (!store.protectionOn() && !store.isSealed(pkg)) return
         if (pkg !in store.blockedPackages() && !store.isSealed(pkg)) return
         val until = store.noteLaunch(pkg)
         val intent = Intent(this, ShameActivity::class.java).apply {
